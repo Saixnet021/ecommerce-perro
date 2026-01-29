@@ -8,6 +8,8 @@ import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useState } from 'react';
 import Image from 'next/image';
+import { db } from '@/lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 export function Cart() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,18 +22,32 @@ export function Cart() {
       return;
     }
 
-    // Aquí irá la lógica de crear orden y enviar WhatsApp
     const total = getTotal();
-    const message = `🛒 *Nuevo Pedido PEDRO SMS*\n\n` +
-      `Cliente: ${user.email}\n` +
-      `Items:\n${items.map(item => `- ${item.name} x${item.quantity} = ${formatPrice(item.price * item.quantity)}`).join('\n')}\n\n` +
-      `*Total: ${formatPrice(total)}*`;
 
-    const whatsappUrl = `https://wa.me/51937074085?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    try {
+      // Guardar orden en Firestore
+      await addDoc(collection(db, 'orders'), {
+        userEmail: user.email,
+        items: items,
+        total: total,
+        status: 'pending',
+        createdAt: new Date(),
+      });
 
-    clearCart();
-    setIsOpen(false);
+      const message = `🛒 *Nuevo Pedido PEDRO SMS*\n\n` +
+        `Cliente: ${user.email}\n` +
+        `Items:\n${items.map(item => `- ${item.name} x${item.quantity} = ${formatPrice(item.price * item.quantity)}`).join('\n')}\n\n` +
+        `*Total: ${formatPrice(total)}*`;
+
+      const whatsappUrl = `https://wa.me/51937074085?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+
+      clearCart();
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Hubo un error al procesar el pedido. Por favor intenta nuevamente.');
+    }
   };
 
   return (

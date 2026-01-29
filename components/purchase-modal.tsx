@@ -62,7 +62,7 @@ export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) 
         productName: product.name,
         productPrice: product.price,
         userEmail: user?.email || 'guest@example.com',
-        status: 'solicitado',
+        status: 'pending',
         createdAt: new Date(),
         quantity: 1,
       };
