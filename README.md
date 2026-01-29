@@ -109,7 +109,7 @@ Accede a `/admin` después de iniciar sesión.
 
 Edita el número de WhatsApp en `components/cart.tsx`:
 ```typescript
-const whatsappUrl = `https://wa.me/51999999999?text=${encodeURIComponent(message)}`;
+const whatsappUrl = `https://wa.me/51937074085?text=${encodeURIComponent(message)}`;
 ```
 
 Cambia `51999999999` por tu número (con código de país).

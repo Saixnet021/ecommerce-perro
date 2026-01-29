@@ -26,10 +26,10 @@ export function Cart() {
       `Cliente: ${user.email}\n` +
       `Items:\n${items.map(item => `- ${item.name} x${item.quantity} = ${formatPrice(item.price * item.quantity)}`).join('\n')}\n\n` +
       `*Total: ${formatPrice(total)}*`;
-    
-    const whatsappUrl = `https://wa.me/51999999999?text=${encodeURIComponent(message)}`;
+
+    const whatsappUrl = `https://wa.me/51937074085?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
-    
+
     clearCart();
     setIsOpen(false);
   };
@@ -51,11 +51,11 @@ export function Cart() {
       {isOpen && (
         <>
           {/* Overlay */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsOpen(false)}
           />
-          
+
           {/* Modal */}
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border-2 border-gray-300">
@@ -65,7 +65,7 @@ export function Cart() {
                   <ShoppingCart className="w-6 h-6 text-blue-600" />
                   Tu Carrito
                 </h2>
-                <button 
+                <button
                   onClick={() => setIsOpen(false)}
                   className="text-gray-900 hover:text-gray-700 p-1 hover:bg-gray-200 rounded transition"
                 >
@@ -145,14 +145,14 @@ export function Cart() {
 
                     {/* Botones */}
                     <div className="flex gap-3 pt-4">
-                      <Button 
+                      <Button
                         onClick={() => setIsOpen(false)}
                         variant="outline"
                         className="flex-1 border-2 border-gray-400 text-gray-900 font-bold hover:bg-gray-100"
                       >
                         Continuar Comprando
                       </Button>
-                      <Button 
+                      <Button
                         onClick={handleCheckout}
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg"
                         size="lg"
