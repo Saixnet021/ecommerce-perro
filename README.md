@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PEDRO SMS - Ecommerce de Tarjetas de Juego
 
-## Getting Started
+Plataforma de ecommerce para vender tarjetas de juego con autenticación, carrito de compras y panel de administración.
 
-First, run the development server:
+## 🚀 Stack Tecnológico
+
+- **Next.js 14** - Framework React con App Router
+- **TypeScript** - Tipado estático
+- **Tailwind CSS** - Estilos
+- **Firebase** - Autenticación y base de datos
+- **Zustand** - Gestión de estado
+- **Lucide React** - Iconos
+
+## 📋 Características
+
+✅ Autenticación con Firebase (Email/Password)  
+✅ Catálogo de productos con búsqueda  
+✅ Carrito de compras persistente  
+✅ Sistema de descuentos automáticos  
+✅ Integración con WhatsApp para pedidos  
+✅ Panel de administración  
+✅ Gestión de productos (CRUD)  
+✅ Gestión de pedidos  
+✅ Control de stock en tiempo real  
+✅ Diseño responsive y moderno  
+
+## 🛠️ Instalación
+
+1. **Instalar dependencias:**
+```bash
+npm install
+```
+
+2. **Configurar Firebase:**
+
+   - Crea un proyecto en [Firebase Console](https://console.firebase.google.com/)
+   - Activa Authentication (Email/Password)
+   - Activa Firestore Database
+   - Copia las credenciales de configuración
+
+3. **Crear archivo `.env.local`:**
+```bash
+cp .env.local.example .env.local
+```
+
+4. **Editar `.env.local` con tus credenciales de Firebase:**
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
+```
+
+## 🚀 Desarrollo
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Estructura del Proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── app/
+│   ├── admin/          # Panel de administración
+│   ├── layout.tsx      # Layout principal
+│   └── page.tsx        # Página de inicio (catálogo)
+├── components/
+│   ├── ui/             # Componentes base (Button, Input, Card)
+│   ├── auth-button.tsx # Autenticación
+│   ├── cart.tsx        # Carrito de compras
+│   ├── navbar.tsx      # Barra de navegación
+│   └── product-card.tsx # Tarjeta de producto
+├── lib/
+│   ├── firebase.ts     # Configuración Firebase
+│   └── utils.ts        # Utilidades
+├── store/
+│   ├── auth.ts         # Estado de autenticación
+│   └── cart.ts         # Estado del carrito
+└── types/
+    └── index.ts        # Tipos TypeScript
+```
 
-## Learn More
+## 🛒 Flujo de Compra
 
-To learn more about Next.js, take a look at the following resources:
+1. Usuario busca y agrega productos al carrito
+2. Revisa el carrito (puede modificar cantidades)
+3. Click en "Finalizar Compra"
+4. Se crea un pedido con estado "pending"
+5. Se abre WhatsApp con el mensaje pre-llenado
+6. Admin aprueba/rechaza desde el panel
+7. Al aprobar, se descuenta el stock automáticamente
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👨‍💼 Panel de Admin
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Accede a `/admin` después de iniciar sesión.
 
-## Deploy on Vercel
+**Funciones:**
+- ➕ Agregar nuevos productos
+- 🗑️ Eliminar productos
+- ✅ Aprobar pedidos (descuenta stock)
+- ❌ Rechazar pedidos
+- 📊 Ver todos los pedidos pendientes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📱 WhatsApp
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Edita el número de WhatsApp en `components/cart.tsx`:
+```typescript
+const whatsappUrl = `https://wa.me/51999999999?text=${encodeURIComponent(message)}`;
+```
+
+Cambia `51999999999` por tu número (con código de país).
+
+## 🚀 Deploy en Vercel
+
+1. Sube el código a GitHub
+2. Importa el proyecto en [Vercel](https://vercel.com)
+3. Agrega las variables de entorno en Vercel
+4. Deploy automático
+
+---
+
+**Desarrollado con ❤️ usando Next.js y Firebase**
+
