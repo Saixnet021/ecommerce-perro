@@ -57,14 +57,20 @@ export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) 
     setIsLoading(true);
     try {
       // Crear la orden
+      // Crear la orden con estructura consistente (array de items)
       const orderData = {
-        productId: product.id,
-        productName: product.name,
-        productPrice: product.price,
         userEmail: user?.email || 'guest@example.com',
+        items: [{
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: 1,
+          imageUrl: product.imageUrl,
+          category: product.category
+        }],
+        total: product.price,
         status: 'pending',
         createdAt: new Date(),
-        quantity: 1,
       };
 
       await addDoc(collection(db, 'orders'), orderData);
