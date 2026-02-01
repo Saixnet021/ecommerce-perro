@@ -12,6 +12,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -23,6 +29,13 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+html {
+  margin: 0;
+  overflow-x: hidden;
 }
 
 @keyframes slideDown {
@@ -30,6 +43,7 @@ body {
     opacity: 0;
     transform: translateY(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -40,6 +54,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -50,6 +65,7 @@ body {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -61,6 +77,7 @@ body {
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -68,9 +85,12 @@ body {
 }
 
 @keyframes bounceSlowly {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -94,4 +114,22 @@ body {
 
 .animate-bounce-slow {
   animation: bounceSlowly 2s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+  display: flex;
+  /* Asegurar que los hijos estén en línea */
+  width: max-content;
+  /* Permitir que el contenido crezca */
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/store/auth';
+import { useAuth } from '@/features/auth/store/auth.store';
 import { auth } from '@/lib/firebase';
 import {
   signInWithEmailAndPassword,
@@ -38,6 +38,7 @@ export default function AdminPage() {
     stock: 0,
     imageUrl: '',
     category: '',
+    whatsappNumber: '',
   });
 
   useEffect(() => {
@@ -133,6 +134,10 @@ export default function AdminPage() {
   };
 
   const handleAddProduct = async () => {
+    if (!newProduct.name || !newProduct.price || !newProduct.whatsappNumber) {
+      alert('Nombre, Precio y WhatsApp son obligatorios');
+      return;
+    }
     try {
       await addDoc(collection(db, 'products'), {
         ...newProduct,
@@ -146,6 +151,7 @@ export default function AdminPage() {
         stock: 0,
         imageUrl: '',
         category: '',
+        whatsappNumber: '',
       });
       loadData();
     } catch (error) {
@@ -207,7 +213,7 @@ export default function AdminPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
@@ -215,14 +221,15 @@ export default function AdminPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-black to-black pointer-events-none" />
+        <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 relative z-10">
           <CardHeader>
-            <CardTitle className="text-center">Panel de Administración</CardTitle>
+            <CardTitle className="text-center text-white text-2xl">Panel de Administración</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleAuth} className="space-y-4">
-              <p className="text-sm text-gray-600 text-center mb-4">
+              <p className="text-sm text-gray-400 text-center mb-4">
                 {isLogin ? 'Inicia sesión para acceder' : 'Crea una cuenta de administrador'}
               </p>
               <Input
@@ -230,7 +237,7 @@ export default function AdminPage() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="text-black bg-white border-2 border-blue-400 focus:border-blue-600 placeholder-gray-600"
+                className="text-white bg-black/40 border-white/10 focus:border-blue-600 placeholder-gray-500"
                 required
               />
               <Input
@@ -238,17 +245,17 @@ export default function AdminPage() {
                 placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="text-black bg-white border-2 border-blue-400 focus:border-blue-600 placeholder-gray-600"
+                className="text-white bg-black/40 border-white/10 focus:border-blue-600 placeholder-gray-500"
                 required
               />
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.3)]" disabled={loading}>
                 {loading ? 'Cargando...' : isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
               </Button>
               <div className="text-center">
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline"
                 >
                   {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
                 </button>
@@ -264,20 +271,20 @@ export default function AdminPage() {
   const ADMIN_EMAIL = 'admin@admin.com';
   if (user.email !== ADMIN_EMAIL) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10">
           <CardHeader>
-            <CardTitle className="text-center text-red-600">Acceso Denegado</CardTitle>
+            <CardTitle className="text-center text-red-500">Acceso Denegado</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-center text-gray-600">
+            <p className="text-center text-gray-300">
               No tienes permisos para acceder al panel de administración.
             </p>
             <p className="text-center text-sm text-gray-500">
               Usuario: {user.email}
             </p>
-            <Button onClick={handleSignOut} className="w-full">
-              <LogOut className="w-4 h-4" />
+            <Button onClick={handleSignOut} className="w-full bg-red-600/20 text-red-400 hover:bg-red-600/30 border border-red-500/50">
+              <LogOut className="w-4 h-4 mr-2" />
               Cerrar Sesión
             </Button>
           </CardContent>
@@ -287,24 +294,25 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-50 py-8 pt-28">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <div className="min-h-screen bg-black py-8 pt-28 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900/10 via-black to-black pointer-events-none" />
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Panel de Administración</h1>
-          <Button onClick={handleSignOut} className="bg-red-600 hover:bg-red-700 text-white w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between mb-8 gap-6 text-center sm:text-left">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight">Panel de <span className="text-blue-500">Administración</span></h1>
+          <Button onClick={handleSignOut} className="bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/30 w-full sm:w-auto">
             <LogOut className="w-4 h-4 mr-2" />
             Salir
           </Button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b-2 border-gray-300 overflow-x-auto">
+        <div className="flex gap-2 mb-6 border-b border-white/10 overflow-x-auto">
           <button
             onClick={() => setActiveTab('productos')}
             className={`px-4 py-3 font-bold whitespace-nowrap transition ${activeTab === 'productos'
-              ? 'border-b-4 border-blue-600 text-blue-600'
-              : 'text-gray-700 hover:text-gray-900'
+              ? 'border-b-2 border-blue-500 text-blue-400'
+              : 'text-gray-400 hover:text-white'
               }`}
           >
             <Package className="w-4 h-4 inline mr-2" />
@@ -313,8 +321,8 @@ export default function AdminPage() {
           <button
             onClick={() => setActiveTab('pedidos')}
             className={`px-4 py-3 font-bold whitespace-nowrap transition ${activeTab === 'pedidos'
-              ? 'border-b-4 border-blue-600 text-blue-600'
-              : 'text-gray-700 hover:text-gray-900'
+              ? 'border-b-2 border-blue-500 text-blue-400'
+              : 'text-gray-400 hover:text-white'
               }`}
           >
             <ShoppingBag className="w-4 h-4 inline mr-2" />
@@ -323,8 +331,8 @@ export default function AdminPage() {
           <button
             onClick={() => setActiveTab('usuarios')}
             className={`px-4 py-3 font-bold whitespace-nowrap transition ${activeTab === 'usuarios'
-              ? 'border-b-4 border-blue-600 text-blue-600'
-              : 'text-gray-700 hover:text-gray-900'
+              ? 'border-b-2 border-blue-500 text-blue-400'
+              : 'text-gray-400 hover:text-white'
               }`}
           >
             <Users className="w-4 h-4 inline mr-2" />
@@ -333,34 +341,34 @@ export default function AdminPage() {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-lg shadow-lg border-2 border-gray-200">
+        <div className="bg-white/5 backdrop-blur-md rounded-xl shadow-xl border border-white/10">
           {/* Productos Tab */}
           {activeTab === 'productos' && (
             <div className="p-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                  <Package className="w-6 h-6 text-blue-600" />
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Package className="w-6 h-6 text-blue-500" />
                   Gestión de Productos
                 </h2>
-                <Button onClick={() => setShowAddProduct(!showAddProduct)} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Button onClick={() => setShowAddProduct(!showAddProduct)} className="bg-blue-600 hover:bg-blue-500 w-full sm:w-auto shadow-[0_0_15px_rgba(37,99,235,0.3)]">
                   <Plus className="w-4 h-4 mr-2" />
                   Agregar Producto
                 </Button>
               </div>
 
               {showAddProduct && (
-                <div className="mb-6 p-4 border-2 border-blue-400 rounded-lg bg-blue-50 space-y-3">
+                <div className="mb-6 p-4 border border-blue-500/30 rounded-lg bg-blue-900/10 space-y-3">
                   <Input
                     placeholder="Nombre"
                     value={newProduct.name}
                     onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                    className="text-black bg-white border-2 border-gray-300 focus:border-blue-600 placeholder-gray-600"
+                    className="text-white bg-black/40 border-white/10 focus:border-blue-500 placeholder-gray-500"
                   />
                   <Input
                     placeholder="Descripción"
                     value={newProduct.description}
                     onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                    className="text-black bg-white border-2 border-gray-300 focus:border-blue-600 placeholder-gray-600"
+                    className="text-white bg-black/40 border-white/10 focus:border-blue-500 placeholder-gray-500"
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Input
@@ -368,26 +376,26 @@ export default function AdminPage() {
                       placeholder="Precio"
                       value={newProduct.price || ''}
                       onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
-                      className="text-black bg-white border-2 border-gray-300 focus:border-blue-600 placeholder-gray-600"
+                      className="text-white bg-black/40 border-white/10 focus:border-blue-500 placeholder-gray-500"
                     />
                     <Input
                       type="number"
                       placeholder="Stock"
                       value={newProduct.stock || ''}
                       onChange={(e) => setNewProduct({ ...newProduct, stock: parseInt(e.target.value) })}
-                      className="text-black bg-white border-2 border-gray-300 focus:border-blue-600 placeholder-gray-600"
+                      className="text-white bg-black/40 border-white/10 focus:border-blue-500 placeholder-gray-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-900 block">Imagen del producto</label>
+                    <label className="text-sm font-semibold text-gray-300 block">Imagen del producto</label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="flex h-10 w-full rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-sm text-black focus:border-blue-600"
+                      className="flex h-10 w-full rounded-md border border-white/10 bg-black/40 px-3 py-2 text-sm text-gray-300 focus:border-blue-500 file:bg-blue-600 file:text-white file:border-0 file:rounded-sm file:mr-2"
                     />
                     {newProduct.imageUrl && (
-                      <div className="relative w-full h-24 bg-gray-100 rounded-md overflow-hidden border-2 border-gray-300">
+                      <div className="relative w-full h-24 bg-black/40 rounded-md overflow-hidden border border-white/10">
                         <img
                           src={newProduct.imageUrl}
                           alt="preview"
@@ -400,9 +408,15 @@ export default function AdminPage() {
                     placeholder="Categoría"
                     value={newProduct.category}
                     onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                    className="text-black bg-white border-2 border-gray-300 focus:border-blue-600 placeholder-gray-600"
+                    className="text-white bg-black/40 border-white/10 focus:border-blue-500 placeholder-gray-500"
                   />
-                  <Button onClick={handleAddProduct} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold">
+                  <Input
+                    placeholder="WhatsApp (ej: 51937074085)"
+                    value={newProduct.whatsappNumber}
+                    onChange={(e) => setNewProduct({ ...newProduct, whatsappNumber: e.target.value })}
+                    className="text-white bg-black/40 border-white/10 focus:border-blue-500 placeholder-gray-500"
+                  />
+                  <Button onClick={handleAddProduct} className="w-full bg-green-600 hover:bg-green-500 text-white font-bold shadow-[0_0_20px_rgba(34,197,94,0.4)] border border-green-500/30">
                     Guardar Producto
                   </Button>
                 </div>
@@ -410,7 +424,7 @@ export default function AdminPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {products.map((product) => (
-                  <div key={product.id} className="p-4 border-2 border-gray-300 rounded-lg bg-white hover:border-blue-400 transition-all">
+                  <div key={product.id} className="p-4 border border-white/10 rounded-lg bg-black/20 hover:border-blue-500/50 transition-all group hover:bg-black/30">
                     <div className="space-y-3">
                       {editingProduct === product.id ? (
                         <>
@@ -420,7 +434,7 @@ export default function AdminPage() {
                               const updated = products.map(p => p.id === product.id ? { ...p, name: e.target.value } : p);
                               setProducts(updated);
                             }}
-                            className="text-black bg-white border-2 border-gray-300 focus:border-blue-600"
+                            className="text-white bg-black/40 border-white/10 focus:border-blue-500"
                           />
                           <Input
                             type="number"
@@ -429,7 +443,7 @@ export default function AdminPage() {
                               const updated = products.map(p => p.id === product.id ? { ...p, stock: parseInt(e.target.value) } : p);
                               setProducts(updated);
                             }}
-                            className="text-black bg-white border-2 border-gray-300 focus:border-blue-600"
+                            className="text-white bg-black/40 border-white/10 focus:border-blue-500"
                             placeholder="Stock"
                           />
                           <Input
@@ -439,17 +453,26 @@ export default function AdminPage() {
                               const updated = products.map(p => p.id === product.id ? { ...p, price: parseFloat(e.target.value) } : p);
                               setProducts(updated);
                             }}
-                            className="text-black bg-white border-2 border-gray-300 focus:border-blue-600"
+                            className="text-white bg-black/40 border-white/10 focus:border-blue-500"
                             placeholder="Precio"
+                          />
+                          <Input
+                            value={product.whatsappNumber || ''}
+                            onChange={(e) => {
+                              const updated = products.map(p => p.id === product.id ? { ...p, whatsappNumber: e.target.value } : p);
+                              setProducts(updated);
+                            }}
+                            className="text-white bg-black/40 border-white/10 focus:border-blue-500"
+                            placeholder="WhatsApp"
                           />
                         </>
                       ) : (
                         <>
-                          <h4 className="font-bold text-gray-900">{product.name}</h4>
+                          <h4 className="font-bold text-white group-hover:text-blue-400 transition-colors">{product.name}</h4>
                           <div className="text-sm space-y-1">
-                            <p className="text-blue-600 font-semibold">{formatPrice(product.price)}</p>
-                            <p className="text-gray-700">
-                              Stock: <span className={product.stock > 10 ? 'text-green-600 font-bold' : product.stock > 0 ? 'text-yellow-600 font-bold' : 'text-red-600 font-bold'}>{product.stock}</span>
+                            <p className="text-blue-400 font-semibold">{formatPrice(product.price)}</p>
+                            <p className="text-gray-400">
+                              Stock: <span className={product.stock > 10 ? 'text-green-400 font-bold' : product.stock > 0 ? 'text-yellow-400 font-bold' : 'text-red-400 font-bold'}>{product.stock}</span>
                             </p>
                           </div>
                         </>
@@ -461,10 +484,11 @@ export default function AdminPage() {
                               onClick={() => handleUpdateProduct(product.id, {
                                 name: product.name,
                                 stock: product.stock,
-                                price: product.price
+                                price: product.price,
+                                whatsappNumber: product.whatsappNumber
                               })}
                               size="sm"
-                              className="flex-1 bg-green-600 hover:bg-green-700"
+                              className="flex-1 bg-green-600 hover:bg-green-500"
                             >
                               <Check className="w-4 h-4" />
                             </Button>
@@ -472,7 +496,7 @@ export default function AdminPage() {
                               onClick={() => setEditingProduct(null)}
                               variant="outline"
                               size="sm"
-                              className="flex-1"
+                              className="flex-1 border-white/40 text-white hover:bg-white/10"
                             >
                               <X className="w-4 h-4" />
                             </Button>
@@ -483,14 +507,14 @@ export default function AdminPage() {
                               onClick={() => setEditingProduct(product.id)}
                               variant="outline"
                               size="sm"
-                              className="flex-1 border-2 border-gray-400 text-gray-900"
+                              className="flex-1 border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:text-blue-300 hover:border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all font-bold"
                             >
                               Editar
                             </Button>
                             <Button
                               onClick={() => handleDeleteProduct(product.id)}
                               size="sm"
-                              className="flex-1 bg-red-600 hover:bg-red-700"
+                              className="flex-1 bg-red-900/30 text-red-400 hover:bg-red-900/50 border border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -507,30 +531,30 @@ export default function AdminPage() {
           {/* Pedidos Tab */}
           {activeTab === 'pedidos' && (
             <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2 mb-6">
-                <ShoppingBag className="w-6 h-6 text-blue-600" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2 mb-6">
+                <ShoppingBag className="w-6 h-6 text-blue-500" />
                 Gestión de Pedidos
               </h2>
-              <div className="space-y-4 max-h-[600px] overflow-y-auto">
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                 {orders
                   .filter((order) => order.status === 'pending')
                   .map((order) => (
-                    <div key={order.id} className="p-4 border-2 border-yellow-300 rounded-lg bg-yellow-50 hover:border-blue-400 transition">
+                    <div key={order.id} className="p-4 border border-yellow-500/30 rounded-lg bg-yellow-900/10 hover:border-blue-500/50 transition">
                       <div className="mb-3">
-                        <p className="font-bold text-gray-900">{order.userEmail}</p>
-                        <p className="text-sm text-gray-600">
-                          Fecha: {order.createdAt?.toLocaleDateString('es-ES') || 'N/A'}
+                        <p className="font-bold text-white">{order.userEmail}</p>
+                        <p className="text-sm text-gray-400">
+                          Fecha: {order.createdAt?.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) || 'N/A'}
                         </p>
                       </div>
-                      <div className="bg-white p-3 rounded border-2 border-gray-200 mb-3">
-                        <p className="font-bold text-gray-900">{order.items?.[0]?.name || 'Producto desconocido'} {order.items?.length > 1 ? `(+${order.items.length - 1} más)` : ''}</p>
-                        <p className="text-blue-600 font-semibold">Items: {order.items?.reduce((acc, item) => acc + item.quantity, 0) || 0}</p>
-                        <p className="text-lg font-bold text-gray-900">Total: {formatPrice(order.finalTotal || order.total || 0)}</p>
+                      <div className="bg-black/30 p-3 rounded border border-white/10 mb-3">
+                        <p className="font-bold text-gray-200">{order.items?.[0]?.name || 'Producto desconocido'} {order.items?.length > 1 ? `(+${order.items.length - 1} más)` : ''}</p>
+                        <p className="text-blue-400 font-semibold">Items: {order.items?.reduce((acc, item) => acc + item.quantity, 0) || 0}</p>
+                        <p className="text-lg font-bold text-white">Total: {formatPrice(order.finalTotal || order.total || 0)}</p>
                       </div>
                       <div className="flex gap-2">
                         <Button
                           onClick={() => handleApproveOrder(order)}
-                          className="flex-1 bg-green-600 hover:bg-green-700"
+                          className="flex-1 bg-green-600 hover:bg-green-500"
                           size="sm"
                         >
                           <Check className="w-4 h-4 mr-2" />
@@ -538,7 +562,7 @@ export default function AdminPage() {
                         </Button>
                         <Button
                           onClick={() => handleRejectOrder(order.id)}
-                          className="flex-1 bg-red-600 hover:bg-red-700"
+                          className="flex-1 bg-red-600 hover:bg-red-500"
                           size="sm"
                         >
                           <X className="w-4 h-4 mr-2" />
@@ -548,7 +572,7 @@ export default function AdminPage() {
                     </div>
                   ))}
                 {orders.filter((order) => order.status === 'pending').length === 0 && (
-                  <p className="text-center text-gray-600 py-12 text-lg font-medium">No hay pedidos pendientes</p>
+                  <p className="text-center text-gray-500 py-12 text-lg font-medium">No hay pedidos pendientes</p>
                 )}
               </div>
             </div>
@@ -557,31 +581,31 @@ export default function AdminPage() {
           {/* Usuarios Tab */}
           {activeTab === 'usuarios' && (
             <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2 mb-6">
-                <Users className="w-6 h-6 text-blue-600" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2 mb-6">
+                <Users className="w-6 h-6 text-blue-500" />
                 Gestión de Usuarios
               </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="overflow-x-auto pb-4">
+                <table className="w-full text-left min-w-[600px]">
                   <thead>
-                    <tr className="border-b-2 border-gray-300">
-                      <th className="text-left py-3 px-4 font-bold text-gray-900">Nombre</th>
-                      <th className="text-left py-3 px-4 font-bold text-gray-900">Email</th>
-                      <th className="text-left py-3 px-4 font-bold text-gray-900">Registrado</th>
-                      <th className="text-left py-3 px-4 font-bold text-gray-900">Total de Órdenes</th>
-                      <th className="text-left py-3 px-4 font-bold text-gray-900">Última Orden</th>
+                    <tr className="border-b border-white/10">
+                      <th className="py-3 px-4 font-bold text-gray-300">Nombre</th>
+                      <th className="py-3 px-4 font-bold text-gray-300">Email</th>
+                      <th className="py-3 px-4 font-bold text-gray-300">Registrado</th>
+                      <th className="py-3 px-4 font-bold text-gray-300">Total de Órdenes</th>
+                      <th className="py-3 px-4 font-bold text-gray-300">Última Orden</th>
                     </tr>
                   </thead>
                   <tbody>
                     {users.map((user, index) => (
-                      <tr key={index} className="border-b border-gray-200 hover:bg-gray-50 transition">
-                        <td className="py-3 px-4 text-gray-900 font-medium">{user.displayName || 'N/A'}</td>
-                        <td className="py-3 px-4 text-gray-700">{user.email}</td>
-                        <td className="py-3 px-4 text-gray-700 text-sm">{user.createdAt?.toLocaleDateString('es-ES') || 'N/A'}</td>
-                        <td className="py-3 px-4 text-gray-700">
-                          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">{user.totalOrders}</span>
+                      <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition">
+                        <td className="py-3 px-4 text-white font-medium">{user.displayName || 'N/A'}</td>
+                        <td className="py-3 px-4 text-gray-400">{user.email}</td>
+                        <td className="py-3 px-4 text-gray-500 text-sm">{user.createdAt?.toLocaleDateString('es-ES') || 'N/A'}</td>
+                        <td className="py-3 px-4 text-gray-400">
+                          <span className="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full font-bold border border-blue-500/20">{user.totalOrders}</span>
                         </td>
-                        <td className="py-3 px-4 text-gray-700 text-sm">
+                        <td className="py-3 px-4 text-gray-500 text-sm">
                           {user.lastOrder?.toLocaleDateString('es-ES') || 'Sin pedidos'}
                         </td>
                       </tr>
@@ -589,7 +613,7 @@ export default function AdminPage() {
                   </tbody>
                 </table>
                 {users.length === 0 && (
-                  <p className="text-center text-gray-600 py-12 text-lg font-medium">No hay usuarios registrados</p>
+                  <p className="text-center text-gray-500 py-12 text-lg font-medium">No hay usuarios registrados</p>
                 )}
               </div>
             </div>

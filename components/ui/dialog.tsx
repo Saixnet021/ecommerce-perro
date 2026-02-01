@@ -29,10 +29,20 @@ const DialogTrigger = React.forwardRef<
 >(({ ...props }, ref) => <button ref={ref} {...props} />);
 DialogTrigger.displayName = 'DialogTrigger';
 
+import { createPortal } from 'react-dom';
+
 const DialogPortal = ({ children }: { children: React.ReactNode }) => {
-  const { open, onOpenChange } = React.useContext(DialogContext);
-  if (!open) return null;
-  return <>{children}</>;
+  const { open } = React.useContext(DialogContext);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!open || !mounted) return null;
+
+  return createPortal(<div className="relative z-[9999]">{children}</div>, document.body);
 };
 
 const DialogOverlay = React.forwardRef<
@@ -67,7 +77,7 @@ const DialogContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-gray-200 bg-white p-6 shadow-lg animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%] sm:rounded-lg',
+          'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-blue-500/20 bg-black/90 backdrop-blur-xl p-6 shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in fade-in-0 zoom-in-95 slide-in-from-left-1/2 slide-in-from-top-[48%] sm:rounded-xl ring-1 ring-white/10',
           className
         )}
         {...props}
@@ -75,7 +85,7 @@ const DialogContent = React.forwardRef<
         {children}
         <button
           onClick={handleClose}
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:pointer-events-none"
+          className="absolute right-4 top-4 rounded-full p-1 opacity-70 transition-all hover:opacity-100 hover:bg-white/10 focus:outline-none disabled:pointer-events-none text-gray-400 hover:text-white"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>

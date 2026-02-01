@@ -6,6 +6,7 @@ export interface Product {
   stock: number;
   imageUrl: string;
   category: string;
+  whatsappNumber: string;
   createdAt: Date;
 }
 

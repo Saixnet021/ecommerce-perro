@@ -26,8 +26,8 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-blue-200 hover:border-blue-500 bg-white">
-        <div className="relative h-48 bg-gradient-to-br from-blue-600 to-blue-500">
+      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-2 border-blue-200 hover:border-blue-500 bg-white h-full flex flex-col">
+        <div className="relative w-full h-32 sm:h-40 md:h-48 bg-gradient-to-br from-blue-600 to-blue-500 flex-shrink-0">
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
@@ -37,7 +37,7 @@ export function ProductCard({ product }: ProductCardProps) {
             />
           ) : (
             <div className="flex items-center justify-center h-full">
-              <span className="text-6xl">🎮</span>
+              <span className="text-5xl sm:text-6xl">🎮</span>
             </div>
           )}
           {product.stock <= 5 && product.stock > 0 && (
@@ -51,32 +51,32 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
         </div>
-        <CardContent className="p-4">
-          <div className="space-y-3">
-            <h3 className="font-bold text-lg line-clamp-1 text-gray-800">{product.name}</h3>
-            <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
-            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-              <span className="text-2xl font-bold text-blue-600">
+        <CardContent className="p-3 sm:p-4 flex flex-col flex-1">
+          <div className="space-y-3 flex-1 flex flex-col">
+            <h3 className="font-bold text-sm sm:text-base line-clamp-1 text-gray-800">{product.name}</h3>
+            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">{product.description}</p>
+            <div className="flex items-center justify-between pt-2 border-t border-gray-200 gap-2">
+              <span className="text-lg sm:text-xl font-bold text-blue-600 truncate">
                 {formatPrice(product.price)}
               </span>
-              <span className="text-sm text-gray-500">Stock: {product.stock}</span>
+              <span className="text-xs text-gray-500 whitespace-nowrap">Stock: {product.stock}</span>
             </div>
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-2 mt-auto">
               <Button
                 onClick={() => setIsPurchaseModalOpen(true)}
                 disabled={product.stock === 0}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 h-9 sm:h-10 text-xs sm:text-sm"
               >
-                <CheckCircle className="w-4 h-4" />
+                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                 Comprar
               </Button>
               <Button
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
                 variant="outline"
-                className="flex-1 border-blue-300 hover:bg-blue-50"
+                className="flex-1 border-blue-300 hover:bg-blue-50 h-9 sm:h-10 text-xs sm:text-sm"
               >
-                <ShoppingCart className="w-4 h-4" />
+                <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
                 Carrito
               </Button>
             </div>

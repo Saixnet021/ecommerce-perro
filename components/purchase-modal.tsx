@@ -5,9 +5,8 @@ import { Product } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { formatPrice } from '@/lib/utils';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { useAuth } from '@/store/auth';
+import { useOrder } from '@/hooks/use-order';
 import { AlertCircle } from 'lucide-react';
 
 interface PurchaseModalProps {
@@ -17,7 +16,7 @@ interface PurchaseModalProps {
 }
 
 export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const { createOrder, isLoading } = useOrder();
   const [isPurchased, setIsPurchased] = useState(false);
   const { user } = useAuth();
 
@@ -54,10 +53,8 @@ export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) 
   }
 
   const handleConfirmPurchase = async () => {
-    setIsLoading(true);
     try {
       // Crear la orden
-      // Crear la orden con estructura consistente (array de items)
       const orderData = {
         userEmail: user?.email || 'guest@example.com',
         items: [{
@@ -73,7 +70,7 @@ export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) 
         createdAt: new Date(),
       };
 
-      await addDoc(collection(db, 'orders'), orderData);
+      await createOrder(orderData);
       setIsPurchased(true);
 
       // Esperar 2 segundos y redirigir a WhatsApp
@@ -87,7 +84,6 @@ export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) 
     } catch (error) {
       console.error('Error al procesar compra:', error);
       alert('Error al procesar la compra');
-      setIsLoading(false);
     }
   };
 
@@ -119,7 +115,7 @@ export function PurchaseModal({ isOpen, product, onClose }: PurchaseModalProps) 
               </div>
               <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
                 <p className="text-sm text-amber-900">
-                  ℹ️ Se creará una solicitud y serás redirigido a WhatsApp para completar el pedido.
+                  Se creará una solicitud y serás redirigido a WhatsApp para completar el pedido.
                 </p>
               </div>
               <div className="flex gap-2 pt-4">
